@@ -1,6 +1,7 @@
 YLoader provides a per platform http loader class.
 
 # Example
+
 ```haxe
 import yloader.impl.js.XMLHttpRequestLoader;
 import yloader.valueObject.Parameter;
@@ -22,4 +23,12 @@ function onResponse(response:Response)
 	else
 		trace("Request failed");
 }
+```
+
+# Install
+
+Recommended installation from from haxelib:
+
+```
+haxelib install yhaxen
 ```
