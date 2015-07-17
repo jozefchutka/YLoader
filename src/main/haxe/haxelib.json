@@ -1,0 +1,15 @@
+{
+	"name": "yloader",
+	"license": "MIT",
+	"tags": [
+		"http", "request", "response", "get", "post", "load"
+	],
+	"description": "YLoader provides a per platform http loader class.",
+	"contributors": [
+		"jozefchutka"
+	],
+	"releasenote": "",
+	"version": "snapshot",
+	"url": "https://github.com/jozefchutka/YLoader",
+	"dependencies": {}
+}

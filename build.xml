@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="bell-information" default="compile-only">
+	<property name="outputDirectory" value="bin"/>
+
+	<target name="validate">
+		<exec executable="haxelib" failonerror="true">
+			<arg value="run"/>
+			<arg value="yhaxen"/>
+			<arg value="validate"/>
+		</exec>
+	</target>
+
+	<target name="compile-only">
+		<exec executable="haxelib" failonerror="true">
+			<arg value="run"/>
+			<arg value="yhaxen"/>
+			<arg value="compile:*"/>
+		</exec>
+	</target>
+
+	<target name="test-only">
+		<exec executable="haxelib" failonerror="true">
+			<arg value="run"/>
+			<arg value="yhaxen"/>
+			<arg value="test:*"/>
+		</exec>
+	</target>
+
+	<target name="clean" description="Clean bin directory.">
+		<delete dir="${outputDirectory}" failonerror="false"/>
+	</target>
+
+	<target name="prepare">
+		<mkdir dir="${outputDirectory}"/>
+	</target>
+</project>

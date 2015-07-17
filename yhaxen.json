@@ -1,0 +1,123 @@
+{
+	"variables":
+	[
+		{
+			"name":"sourceDirectory",
+			"value":"src/main/haxe"
+		},
+		{
+			"name":"outputDirectory",
+			"value":"bin"
+		},
+		{
+			"name":"testSourceDirectory",
+			"value":"src/test/haxe"
+		},
+		{
+			"name":"testOutputDirectory",
+			"value":"bin/test"
+		},
+		{
+			"name":"testReportDirectory",
+			"value":"bin/test-report"
+		}
+	],
+	
+	"dependencies":
+	[
+		{
+			"name":"munit",
+			"version":"cf0c91a2c9",
+			"source": "git@github.com:massiveinteractive/MassiveUnit.git",
+			"type": "git",
+			"subdirectory": "src",
+			"makeCurrent": true,
+			"scopes": ["test"]
+		},
+		{
+			"name":"mcover",
+			"version":"2.0.3",
+			"type": "haxelib",
+			"scopes": ["test"],
+			"forceVersion": true
+		},
+		{
+			"name":"mconsole",
+			"version":"1.6.0",
+			"type": "haxelib",
+			"scopes": ["test"],
+			"forceVersion": true
+		},
+		{
+			"name":"mlib",
+			"version":"2.0.2",
+			"type": "haxelib",
+			"scopes": ["test"],
+			"forceVersion": true
+		}
+	],
+
+	"tests":
+	[
+		{
+			"name": "test",
+			"command": "haxelib",
+			"arguments":
+			[
+				"run", "munit", "test", "cliconfig",
+				"${variable:testSourceDirectory}",
+				"${variable:testOutputDirectory}",
+				"${variable:testReportDirectory}",
+				"-result-exit-code",
+				"config:classPath", "${variable:sourceDirectory}",
+				"config:coverageIgnoredClass", "module",
+				"target:-main", "TestMain",
+				"target:-cp", "${variable:sourceDirectory}",
+				"target:-cp", "${variable:testSourceDirectory}",
+				"${dependency:*:classPath:target:-cp}",
+				"target:-js", "${variable:testOutputDirectory}/js_test.js"
+			]
+		}
+	],
+
+	"builds":
+	[
+		{
+			"name": "clean",
+			"command": "ant",
+			"arguments": ["clean", "-DoutputDirectory=${variable:outputDirectory}"]
+		},
+		{
+			"name": "prepare",
+			"command": "ant",
+			"arguments": ["prepare", "-DoutputDirectory=${variable:outputDirectory}"]
+		},
+		{
+			"name": "compile-sample",
+			"command": "haxe",
+			"arguments":
+			[
+				"-main", "yloader.sample.Main", "-js", "${variable:outputDirectory}/main.js",
+				"-cp", "${variable:sourceDirectory}",
+				"-cp", "src/sample/haxe"
+			]
+		}
+	],
+
+	"releases":
+	[
+		{
+			"type": "haxelib",
+			"haxelib": "${variable:sourceDirectory}/haxelib.json",
+			"archiveInstructions":
+			[
+				{"source": "${variable:sourceDirectory}/haxelib.json", "target":"haxelib.json"},
+				{"source": "${variable:sourceDirectory}/yloader", "target": "yloader"}
+			]
+		},
+		{
+			"type": "git",
+			"haxelib": "${variable:sourceDirectory}/haxelib.json"
+		}
+	]
+}

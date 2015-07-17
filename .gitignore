@@ -1,0 +1,4 @@
+/.idea
+/bin
+/src/test/haxe/TestSuite.hx
+/YLoader.iml
