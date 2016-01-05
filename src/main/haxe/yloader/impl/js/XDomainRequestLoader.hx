@@ -26,21 +26,29 @@ class XDomainRequestLoader extends XMLHttpRequestLoader
 	{
 		if(!isAvailable)
 			return false;
-		
-		if(url.indexOf('http://') != 0 && url.indexOf('https://') != 0)
+
+		var hostOriginParser = getParser(Browser.document.location.href);
+		var urlOriginParser = getParser(url);
+
+		if(hostOriginParser.protocol != urlOriginParser.protocol)
 			return false;
-		
-		if(getHost(Browser.document.location.href) == getHost(url))
+
+		if(hostOriginParser.host == urlOriginParser.host)
 			return false;
-		
+
 		return true;
 	}
-	
-	static function getHost(url:String):String
+
+	static function getParser(url:String):js.html.AnchorElement
 	{
 		var parser = Browser.document.createAnchorElement();
 		parser.href = url;
-		return parser.host;
+		return parser;
+	}
+
+	static function getHost(url:String):String
+	{
+		return getParser(url).host;
 	}
 	
 	override function load()
