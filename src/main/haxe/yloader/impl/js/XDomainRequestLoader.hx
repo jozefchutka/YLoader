@@ -1,8 +1,8 @@
 package yloader.impl.js;
 
-import js.html.XMLHttpRequest;
 import js.Browser;
-
+import js.html.AnchorElement;
+import js.html.XMLHttpRequest;
 import yloader.enums.Status;
 import yloader.valueObject.Response;
 
@@ -26,21 +26,27 @@ class XDomainRequestLoader extends XMLHttpRequestLoader
 	{
 		if(!isAvailable)
 			return false;
-		
+
 		if(url.indexOf('http://') != 0 && url.indexOf('https://') != 0)
 			return false;
-		
-		if(getHost(Browser.document.location.href) == getHost(url))
+
+		var originParser = getParser(Browser.document.location.href);
+		var urlParser = getParser(url);
+
+		if(originParser.protocol != urlParser.protocol)
 			return false;
-		
+
+		if(originParser.host == urlParser.host)
+			return false;
+
 		return true;
 	}
-	
-	static function getHost(url:String):String
+
+	public static function getParser(url:String):AnchorElement
 	{
 		var parser = Browser.document.createAnchorElement();
 		parser.href = url;
-		return parser.host;
+		return parser;
 	}
 	
 	override function load()
