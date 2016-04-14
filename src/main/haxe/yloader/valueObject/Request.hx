@@ -9,7 +9,11 @@ class Request
 	public var method:Method;
 	public var headers:Array<Parameter>;
 	public var getParameters:Array<Parameter>;
-	public var data:String;
+
+	/**
+	 * defaulting data to null, else without default null value, IE11 would send "undefined" String in POST body
+	 **/
+	public var data:String = null;
 
 	public var urlWithQuery(get, never):String;
 
