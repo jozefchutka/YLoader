@@ -64,7 +64,7 @@ class XMLHttpRequestLoader implements ILoader
 
 	function isSuccess(status:Int):Bool
 	{
-		return status >= 200 && status < 400;
+		return (status >= 200 && status < 400) || (status == 0 && xhr.responseText != null && xhr.responseText != "");git
 	}
 
 	function handleResponse(xhr:XMLHttpRequest)
