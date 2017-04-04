@@ -27,8 +27,8 @@ function onResponse(response:Response)
 
 # Install
 
-Recommended installation from from haxelib:
+Recommended installation from haxelib:
 
 ```
-haxelib install yhaxen
+haxelib install yloader
 ```
