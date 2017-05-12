@@ -2,14 +2,19 @@
 	"name": "yloader",
 	"license": "MIT",
 	"tags": [
-		"http", "request", "response", "get", "post", "load"
+		"http",
+		"request",
+		"response",
+		"get",
+		"post",
+		"load"
 	],
 	"description": "YLoader provides a per platform http loader class.",
 	"contributors": [
 		"jozefchutka"
 	],
-	"releasenote": "",
-	"version": "snapshot",
+	"releasenote": "Added support for parsing parameters from query string",
+	"version": "0.0.4",
 	"url": "https://github.com/jozefchutka/YLoader",
 	"dependencies": {}
 }
