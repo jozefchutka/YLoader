@@ -56,4 +56,46 @@ class ParameterUtilTest
 
 		Assert.areEqual(result, "p1=a%20b&p%202=a%3Db");
 	}
+
+	@Test
+	public function customQueryString_fromQueryString_matches():Void
+	{
+		Assert.areEqual(1, ParameterUtil.fromQueryString("?test=1").length);
+		Assert.areEqual("test", ParameterUtil.fromQueryString("?test=1")[0].name);
+		Assert.areEqual("1", ParameterUtil.fromQueryString("?test=1")[0].value);
+		Assert.areEqual("2", ParameterUtil.fromQueryString("test=2")[0].value);
+
+		Assert.areEqual(2, ParameterUtil.fromQueryString("?foo=bar&test=3").length);
+		Assert.areEqual("foo", ParameterUtil.fromQueryString("foo=bar&test=3")[0].name);
+		Assert.areEqual("bar", ParameterUtil.fromQueryString("?foo=bar&test=3")[0].value);
+		Assert.areEqual("test", ParameterUtil.fromQueryString("?foo=bar&test=3")[1].name);
+		Assert.areEqual("3", ParameterUtil.fromQueryString("foo=bar&test=3")[1].value);
+
+		Assert.areEqual(3, ParameterUtil.fromQueryString("?foo=bar&test=4&bar=").length);
+		Assert.areEqual("4", ParameterUtil.fromQueryString("?foo=bar&test=4&bar=")[1].value);
+		Assert.areEqual("", ParameterUtil.fromQueryString("?foo=bar&test=4&bar=")[2].value);
+
+		Assert.areEqual(null, ParameterUtil.fromQueryString(""));
+		Assert.areEqual(null, ParameterUtil.fromQueryString("?"));
+
+		Assert.areEqual(1, ParameterUtil.fromQueryString("name").length);
+		Assert.areEqual("name", ParameterUtil.fromQueryString("name")[0].name);
+		Assert.areEqual("", ParameterUtil.fromQueryString("name")[0].value);
+
+		Assert.areEqual("&123", ParameterUtil.fromQueryString("?test=%26123")[0].value);
+
+		Assert.areEqual(2, ParameterUtil.fromQueryString("?foo=&bar=").length);
+		Assert.areEqual("foo", ParameterUtil.fromQueryString("foo=&bar=")[0].name);
+		Assert.areEqual("", ParameterUtil.fromQueryString("?foo=&bar=")[0].value);
+		Assert.areEqual("bar", ParameterUtil.fromQueryString("?foo=&bar=")[1].name);
+		Assert.areEqual("", ParameterUtil.fromQueryString("foo=&bar=")[1].value);
+
+		Assert.areEqual(3, ParameterUtil.fromQueryString("?foo=1&foo=2&foo=3").length);
+		Assert.areEqual("foo", ParameterUtil.fromQueryString("?foo=1&foo=2&foo=3")[0].name);
+		Assert.areEqual("1", ParameterUtil.fromQueryString("?foo=1&foo=2&foo=3")[0].value);
+		Assert.areEqual("foo", ParameterUtil.fromQueryString("?foo=1&foo=2&foo=3")[1].name);
+		Assert.areEqual("2", ParameterUtil.fromQueryString("?foo=1&foo=2&foo=3")[1].value);
+		Assert.areEqual("foo", ParameterUtil.fromQueryString("?foo=1&foo=2&foo=3")[2].name);
+		Assert.areEqual("3", ParameterUtil.fromQueryString("?foo=1&foo=2&foo=3")[2].value);
+	}
 }
