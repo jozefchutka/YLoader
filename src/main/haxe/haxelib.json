@@ -13,8 +13,8 @@
 	"contributors": [
 		"jozefchutka"
 	],
-	"releasenote": "Added support for parsing parameters from query string",
-	"version": "0.0.4",
+	"releasenote": "Fixed IE URL parsing",
+	"version": "0.0.5",
 	"url": "https://github.com/jozefchutka/YLoader",
 	"dependencies": {}
 }
