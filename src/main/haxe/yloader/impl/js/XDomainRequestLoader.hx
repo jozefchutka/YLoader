@@ -1,9 +1,9 @@
 package yloader.impl.js;
 
 import js.Browser;
-import js.html.AnchorElement;
 import js.html.XMLHttpRequest;
 import yloader.enums.Status;
+import yloader.util.UrlUtil;
 import yloader.valueObject.Response;
 
 class XDomainRequestLoader extends XMLHttpRequestLoader
@@ -30,8 +30,8 @@ class XDomainRequestLoader extends XMLHttpRequestLoader
 		if(url.indexOf('http://') != 0 && url.indexOf('https://') != 0)
 			return false;
 
-		var originParser = getParser(Browser.document.location.href);
-		var urlParser = getParser(url);
+		var originParser = UrlUtil.parse(Browser.document.location.href);
+		var urlParser = UrlUtil.parse(url);
 
 		if(originParser.protocol != urlParser.protocol)
 			return false;
@@ -42,13 +42,6 @@ class XDomainRequestLoader extends XMLHttpRequestLoader
 		return true;
 	}
 
-	public static function getParser(url:String):AnchorElement
-	{
-		var parser = Browser.document.createAnchorElement();
-		parser.href = url;
-		return parser;
-	}
-	
 	override function load()
 	{
 		response = null;
