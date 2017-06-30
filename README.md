@@ -25,6 +25,12 @@ function onResponse(response:Response)
 }
 ```
 
+# Release
+
+```
+haxelib run yhaxen release -version 0.0.5 -message "Changes..."
+```
+
 # Install
 
 Recommended installation from haxelib:
