@@ -13,8 +13,8 @@
 	"contributors": [
 		"jozefchutka"
 	],
-	"releasenote": "Fixed IE URL parsing",
-	"version": "0.0.5",
+	"releasenote": "response.data as Dynamic",
+	"version": "0.0.6",
 	"url": "https://github.com/jozefchutka/YLoader",
 	"dependencies": {}
 }
