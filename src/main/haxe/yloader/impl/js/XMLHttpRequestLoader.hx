@@ -59,7 +59,7 @@ class XMLHttpRequestLoader implements ILoader
 		var status = getStatus(xhr);
 		var success = isSuccess(status);
 		var headers = getHeaders(xhr);
-		return new Response(success, xhr.responseText, status, xhr.statusText, headers);
+		return new Response(success, xhr.response, status, xhr.statusText, headers);
 	}
 
 	function isSuccess(status:Int):Bool

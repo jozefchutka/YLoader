@@ -25,6 +25,23 @@ function onResponse(response:Response)
 }
 ```
 
+## Loading Bytes
+
+```haxe
+import haxe.io.Bytes;
+import js.html.XMLHttpRequestResponseType;
+
+var loader = Loader.create(request);
+loader.onResponse = onResponse
+loader.load();
+cast(loader, XMLHttpRequestLoader).xhr.responseType = XMLHttpRequestResponseType.ARRAYBUFFER;
+
+function onResponse(response:Response)
+{
+	var bytes = Bytes.ofData(response.data);
+}
+```
+
 # Release
 
 ```
