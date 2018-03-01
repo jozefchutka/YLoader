@@ -13,8 +13,8 @@
 	"contributors": [
 		"jozefchutka"
 	],
-	"releasenote": "response.data as Dynamic",
-	"version": "0.0.6",
+	"releasenote": "Added PATCH and TRACE request methods.",
+	"version": "0.0.7",
 	"url": "https://github.com/jozefchutka/YLoader",
 	"dependencies": {}
 }
