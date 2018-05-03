@@ -1,5 +1,6 @@
 package yloader.util;
 
+import haxe.DynamicAccess;
 import yloader.valueObject.Parameter;
 
 class HeaderUtil
@@ -18,5 +19,14 @@ class HeaderUtil
 			result.push(new Parameter(name, value));
 		}
 		return result;
+	}
+
+	public static function arrayToJson(list:Array<Parameter>):DynamicAccess<Dynamic>
+	{
+		var ret:DynamicAccess<Dynamic> = {};
+		for (header in list)
+			ret.set(header.name, header.value);
+
+		return ret;
 	}
 }
