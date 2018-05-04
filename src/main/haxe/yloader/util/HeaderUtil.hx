@@ -23,6 +23,9 @@ class HeaderUtil
 
 	public static function arrayToJson(list:Array<Parameter>):DynamicAccess<Dynamic>
 	{
+		if (list == null)
+			return {};
+
 		var ret:DynamicAccess<Dynamic> = {};
 		for (header in list)
 			ret.set(header.name, header.value);

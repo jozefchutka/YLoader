@@ -1,5 +1,6 @@
 package main.haxe.yloader.impl.js;
 
+import haxe.DynamicAccess;
 import js.node.buffer.Buffer;
 import js.node.http.ClientRequest;
 import js.node.Http.HttpRequestOptions;
@@ -14,16 +15,14 @@ import yloader.valueObject.Parameter;
 import yloader.valueObject.Request;
 import yloader.valueObject.Response;
 
-class NodejsRequestLoader implements ILoader
+class NodeLoader implements ILoader
 {
 	public var onResponse:Response->Void;
 	public var request:Request;
 
 	var clientRequest:ClientRequest;
+	var response:IncomingMessage;
 	var responseString:String;
-	var statusCode:Int;
-	var statusText:String;
-	var responseHeaders:Array<Parameter>;
 
 	public function new(?request:Request)
 	{
@@ -33,7 +32,8 @@ class NodejsRequestLoader implements ILoader
 	public function load():Void
 	{
 		cancel();
-		createRequest();
+		createClientRequest();
+		addClientRequestListeners();
 		writeData();
 		endRequest();
 	}
@@ -41,25 +41,32 @@ class NodejsRequestLoader implements ILoader
 	public function cancel():Void
 	{
 		if (clientRequest != null)
+		{
+			removeClientRequestListeners();
 			clientRequest.abort();
+		}
 		clientRequest = null;
+		response = null;
 		responseString = "";
-		statusCode = 0;
-		statusText = "";
 	}
 
-	function createRequest():Void
+	function createClientRequest():Void
 	{
 		var url:UrlData = Url.parse(request.urlWithQuery, true);
-		switch (url.protocol)
-		{
-			case "http:":
-				clientRequest = createHttpRequest(url);
-			case "https:":
-				clientRequest = createHttpsRequest(url);
-			default:
-		}
-		clientRequest.on("error", onError);
+		if (url.protocol == "http:")
+			clientRequest = createHttpRequest(url);
+		else if (url.protocol == "https:")
+			clientRequest = createHttpsRequest(url);
+	}
+
+	function addClientRequestListeners():Void
+	{
+		clientRequest.on("error", onClientRequestError);
+	}
+
+	function removeClientRequestListeners():Void
+	{
+		clientRequest.removeAllListeners("error");
 	}
 
 	function writeData():Void
@@ -79,50 +86,51 @@ class NodejsRequestLoader implements ILoader
 
 	function createHttpRequest(url:UrlData):ClientRequest
 	{
-		var options:HttpRequestOptions = {
-			host: url.host,
-			port: url.port == "" ? 80 : Std.parseInt(url.port),
-			path: url.path,
-			method: Std.string(request.method)
-		};
-
-		setContentLengthHeader();
-		if (request.headers != null && request.headers.length > 0)
-			options.headers = HeaderUtil.arrayToJson(request.headers);
-
+		var options:HttpRequestOptions = createOptions(url);
+		options.headers = getHeaders();
 		return Http.request(options, onRequestResponse);
 	}
 
 	function createHttpsRequest(url:UrlData):ClientRequest
 	{
-		var options:HttpsRequestOptions = {
-			host: url.host,
-			port: url.port == "" ? 443 : Std.parseInt(url.port),
-			path: url.path,
-			method: Std.string(request.method)
-		};
-
-		setContentLengthHeader();
-		if (request.headers != null && request.headers.length > 0)
-			options.headers = HeaderUtil.arrayToJson(request.headers);
-
+		var options:HttpsRequestOptions = createOptions(url);
+		options.headers = getHeaders();
 		return Https.request(options, onRequestResponse);
 	}
 
-	function setContentLengthHeader():Void
+	function createOptions(url:UrlData):Dynamic
 	{
-		if (request.data == null || request.data.length < 1)
+		return {
+			host: url.host,
+			port: Std.parseInt(url.port),
+			path: url.path,
+			method: Std.string(request.method)
+		};
+	}
+
+	function getHeaders():DynamicAccess<haxe.extern.EitherType<String,Array<String>>>
+	{
+		var headers:DynamicAccess<haxe.extern.EitherType<String,Array<String>>>;
+		headers = HeaderUtil.arrayToJson(request.headers);
+		setContentLengthHeader(headers);
+		return headers;
+	}
+
+	function setContentLengthHeader(headers:DynamicAccess<haxe.extern.EitherType<String,Array<String>>>):Void
+	{
+		if (request.data == null || request.data.length < 1 || headers == null)
 			return;
 
-		for (header in request.headers)
-			if (header.name.toLowerCase().indexOf("content-length") > -1)
+		for (header in headers.keys())
+			if (header.toLowerCase().indexOf("content-length") > -1)
 				return;
-		request.headers.push(new Parameter("Content-Length", Std.string(Buffer._byteLength(request.data))));
+
+		headers.set("Content-Length", Std.string(Buffer.byteLength(request.data)));
 	}
 
 	function handleResponse(responseObject:Dynamic)
 	{
-		if(onResponse == null)
+		if(onResponse == null || response == null)
 			return;
 
 		var response = getResponse(responseObject);
@@ -131,12 +139,13 @@ class NodejsRequestLoader implements ILoader
 
 	function getResponse(responseObject:Dynamic):Response
 	{
-		return new Response(isSuccess(), responseObject , statusCode, statusText, responseHeaders);
+		return new Response(isSuccess(), responseObject, response.statusCode,
+		response.statusMessage, getResponseHeaders(response));
 	}
 
 	function isSuccess():Bool
 	{
-		return statusCode >= 200 && statusCode < 400;
+		return response.statusCode >= 200 && response.statusCode < 400;
 	}
 
 	function getResponseHeaders(source:IncomingMessage):Array<Parameter>
@@ -150,26 +159,24 @@ class NodejsRequestLoader implements ILoader
 
 	function onRequestResponse(response:IncomingMessage):Void
 	{
-		statusCode = response.statusCode;
-		statusText = response.statusMessage;
-		responseHeaders = getResponseHeaders(response);
+		this.response = response;
 		response.setEncoding("utf-8");
-		response.on('data', onData);
-		response.on('end', onEnd);
+		response.on("data", onIncomingMessageData);
+		response.on("end", onIncomingMessageEnd);
 	}
 
-	function onData(data:String):Void
+	function onIncomingMessageData(data:String):Void
 	{
 		responseString += data;
 	}
 
-	function onEnd(data:Dynamic):Void
+	function onIncomingMessageEnd(data:Dynamic):Void
 	{
 		handleResponse(responseString);
 		cancel();
 	}
 
-	function onError(error:Dynamic):Void
+	function onClientRequestError(error:Dynamic):Void
 	{
 		cancel();
 	}
