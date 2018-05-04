@@ -108,24 +108,23 @@ class NodeLoader implements ILoader
 		};
 	}
 
-	function getHeaders():DynamicAccess<haxe.extern.EitherType<String,Array<String>>>
+	function getHeaders():Dynamic
 	{
-		var headers:DynamicAccess<haxe.extern.EitherType<String,Array<String>>>;
-		headers = HeaderUtil.arrayToJson(request.headers);
+		var headers:Dynamic;
+		headers = HeaderUtil.toObject(request.headers);
 		setContentLengthHeader(headers);
 		return headers;
 	}
 
-	function setContentLengthHeader(headers:DynamicAccess<haxe.extern.EitherType<String,Array<String>>>):Void
+	function setContentLengthHeader(headers:Dynamic):Void
 	{
 		if (request.data == null || request.data.length < 1 || headers == null)
 			return;
 
-		for (header in headers.keys())
-			if (header.toLowerCase().indexOf("content-length") > -1)
-				return;
+		if (Reflect.hasField(headers, "content-length") || Reflect.hasField(headers, "Content-Length"))
+			return;
 
-		headers.set("Content-Length", Std.string(Buffer.byteLength(request.data)));
+		Reflect.setField(headers, "Content-Length", Std.string(Buffer.byteLength(request.data)));
 	}
 
 	function handleResponse(responseObject:Dynamic)
