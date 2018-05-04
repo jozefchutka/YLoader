@@ -56,11 +56,11 @@
 			"forceVersion": true
 		},
 		{
-		  "name":"hxnodejs",
-		  "version":"4.0.9",
-		  "type": "haxelib",
-		  "scopes": ["test"],
-		  "forceVersion": true
+			"name":"hxnodejs",
+			"version":"4.0.9",
+			"type": "haxelib",
+			"scopes": ["test"],
+			"forceVersion": true
 		}
 	],
 
