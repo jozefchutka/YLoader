@@ -95,13 +95,13 @@ class NodeLoader implements ILoader
 
 	function createHttpsRequest(url:UrlData):ClientRequest
 	{
-		var options:HttpsRequestOptions = cast createOptions(url);
+		var options:HttpsRequestOptions = createOptions(url);
 		return Https.request(options, onRequestResponse);
 	}
 
-	function createOptions(url:UrlData):HttpRequestOptions
+	function createOptions(url:UrlData):HttpsRequestOptions
 	{
-		var options:HttpRequestOptions = {
+		var options:HttpsRequestOptions = {
 			host: url.host,
 			port: Std.parseInt(url.port),
 			path: url.path,
