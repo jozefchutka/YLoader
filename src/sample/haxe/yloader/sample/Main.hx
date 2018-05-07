@@ -8,6 +8,7 @@ class Main
 			yloader.enums.Method,
 			yloader.enums.Status,
 			yloader.impl.js.Loader,
+			yloader.impl.js.NodeLoader,
 			yloader.impl.js.XDomainRequestLoader,
 			yloader.impl.js.XMLHttpRequestLoader,
 			yloader.util.HeaderUtil,
