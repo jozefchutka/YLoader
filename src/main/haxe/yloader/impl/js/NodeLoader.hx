@@ -83,8 +83,7 @@ class NodeLoader implements ILoader
 
 	function endRequest():Void
 	{
-		if (clientRequest != null)
-			clientRequest.end();
+		clientRequest.end();
 	}
 
 	function createHttpRequest(url:UrlData):ClientRequest
