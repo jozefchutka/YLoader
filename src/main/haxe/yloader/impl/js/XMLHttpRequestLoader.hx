@@ -5,8 +5,9 @@ import js.Browser;
 
 import yloader.enums.Status;
 import yloader.util.HeaderUtil;
-import yloader.valueObject.Request;
+import yloader.util.StatusCodeUtil;
 import yloader.valueObject.Parameter;
+import yloader.valueObject.Request;
 import yloader.valueObject.Response;
 
 class XMLHttpRequestLoader implements ILoader
@@ -57,14 +58,9 @@ class XMLHttpRequestLoader implements ILoader
 	function getResponse(xhr:XMLHttpRequest):Response
 	{
 		var status = getStatus(xhr);
-		var success = isSuccess(status);
+		var success = StatusCodeUtil.isSuccess(status);
 		var headers = getHeaders(xhr);
 		return new Response(success, xhr.response, status, xhr.statusText, headers);
-	}
-
-	function isSuccess(status:Int):Bool
-	{
-		return status >= 200 && status < 400;
 	}
 
 	function handleResponse(xhr:XMLHttpRequest)

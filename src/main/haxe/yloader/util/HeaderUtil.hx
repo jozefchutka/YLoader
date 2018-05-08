@@ -20,6 +20,15 @@ class HeaderUtil
 		return result;
 	}
 
+	public static function fromStringArrayToParameters(rawHeaders:Array<String>):Array<Parameter>
+	{
+		var i=0, result:Array<Parameter> = [];
+		while (i < rawHeaders.length)
+			result.push(new Parameter(rawHeaders[i++], rawHeaders[i++]));
+
+		return result;
+	}
+
 	public static function toObject(list:Array<Parameter>):Dynamic
 	{
 		var result = {};

@@ -10,6 +10,7 @@ import js.node.Https;
 import js.node.Url;
 import yloader.ILoader;
 import yloader.util.HeaderUtil;
+import yloader.util.StatusCodeUtil;
 import yloader.valueObject.Parameter;
 import yloader.valueObject.Request;
 import yloader.valueObject.Response;
@@ -18,8 +19,7 @@ class NodeLoader implements ILoader
 {
 	public var onResponse:Response->Void;
 	public var request:Request;
-
-	private inline static var RESPONSE_ENCODING = "utf-8";
+	public var responseEncoding = "utf-8";
 
 	var clientRequest:ClientRequest;
 	var response:IncomingMessage;
@@ -61,7 +61,7 @@ class NodeLoader implements ILoader
 			case "https:":
 				return createHttpsRequest(url);
 			default:
-				throw "Unrecognized protocol. Failed to create request.";
+				return null;
 		}
 	}
 
@@ -104,10 +104,10 @@ class NodeLoader implements ILoader
 			host: url.host,
 			port: Std.parseInt(url.port),
 			path: url.path,
-			method: Std.string(request.method)
+			method: Std.string(request.method),
+			headers: getHeaders()
 		};
 
-		options.headers = getHeaders();
 		return options;
 	}
 
@@ -144,28 +144,15 @@ class NodeLoader implements ILoader
 
 	function getResponse(responseObject:Dynamic):Response
 	{
-		return new Response(isSuccess(), responseObject, response.statusCode,
-			response.statusMessage, getResponseHeaders(response));
-	}
-
-	function isSuccess():Bool
-	{
-		return response.statusCode >= 200 && response.statusCode < 400;
-	}
-
-	function getResponseHeaders(source:IncomingMessage):Array<Parameter>
-	{
-		var result:Array<Parameter> = [];
-		for (key in source.headers.keys())
-			result.push(new Parameter(key, source.headers.get(key)));
-
-		return result;
+		var isSuccess = StatusCodeUtil.isSuccess(response.statusCode);
+		var headers = HeaderUtil.fromStringArrayToParameters(response.rawHeaders);
+		return new Response(isSuccess, responseObject, response.statusCode, response.statusMessage, headers);
 	}
 
 	function onRequestResponse(response:IncomingMessage):Void
 	{
 		this.response = response;
-		response.setEncoding(RESPONSE_ENCODING);
+		response.setEncoding(responseEncoding);
 		response.on("data", onIncomingMessageData);
 		response.on("end", onIncomingMessageEnd);
 	}
