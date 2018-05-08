@@ -6,10 +6,6 @@
 			"value":"src/main/haxe"
 		},
 		{
-			"name":"outputDirectory",
-			"value":"bin"
-		},
-		{
 			"name":"testSourceDirectory",
 			"value":"src/test/haxe"
 		},
@@ -27,7 +23,7 @@
 	[
 		{
 			"name":"munit",
-			"version":"cf0c91a2c9",
+			"version":"2.2.2",
 			"source": "git@github.com:massiveinteractive/MassiveUnit.git",
 			"type": "git",
 			"subdirectory": "src",
@@ -89,24 +85,13 @@
 	"builds":
 	[
 		{
-			"name": "clean",
-			"command": "ant",
-			"arguments": ["clean", "-DoutputDirectory=${variable:outputDirectory}"]
-		},
-		{
-			"name": "prepare",
-			"command": "ant",
-			"arguments": ["prepare", "-DoutputDirectory=${variable:outputDirectory}"]
-		},
-		{
-			"name": "compile-sample",
+			"name": "compile",
 			"command": "haxe",
 			"arguments":
 			[
-				"-main", "yloader.sample.Main", "-js", "${variable:outputDirectory}/main.js",
 				"-cp", "${variable:sourceDirectory}",
-				"-cp", "src/sample/haxe",
-				"${dependency:*:classPath:-cp}"
+				"--macro", "include('yloader')",
+				"-js", "none", "--no-output"
 			]
 		}
 	],
