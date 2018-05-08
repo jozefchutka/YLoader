@@ -106,7 +106,7 @@
 				"-main", "yloader.sample.Main", "-js", "${variable:outputDirectory}/main.js",
 				"-cp", "${variable:sourceDirectory}",
 				"-cp", "src/sample/haxe",
-				"${dependency:hxnodejs:classPath:-cp}"
+				"${dependency:*:classPath:-cp}"
 			]
 		}
 	],
