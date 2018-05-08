@@ -4,6 +4,8 @@ import yloader.valueObject.Parameter;
 
 class HeaderUtil
 {
+	public static inline var CONTENT_LENGTH_HEADER_NAME = "content-length";
+
 	public static function toParameters(text:String):Array<Parameter>
 	{
 		var lines = text.split("\n");
@@ -17,23 +19,6 @@ class HeaderUtil
 			var value = StringTools.trim(data.join(":"));
 			result.push(new Parameter(name, value));
 		}
-		return result;
-	}
-
-	public static function fromStringArrayToParameters(rawHeaders:Array<String>):Array<Parameter>
-	{
-		var i=0, result:Array<Parameter> = [];
-		while (i < rawHeaders.length)
-			result.push(new Parameter(rawHeaders[i++], rawHeaders[i++]));
-
-		return result;
-	}
-
-	public static function toObject(list:Array<Parameter>):Dynamic
-	{
-		var result = {};
-		for (item in list)
-			Reflect.setField(result, item.name, item.value);
 		return result;
 	}
 }

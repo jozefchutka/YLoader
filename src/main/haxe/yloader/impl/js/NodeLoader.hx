@@ -100,32 +100,30 @@ class NodeLoader implements ILoader
 
 	function createOptions(url:UrlData):HttpsRequestOptions
 	{
-		var options:HttpsRequestOptions = {
+		return {
 			host: url.host,
 			port: Std.parseInt(url.port),
 			path: url.path,
 			method: Std.string(request.method),
 			headers: getHeaders()
 		};
-
-		return options;
 	}
 
 	function getHeaders():Dynamic
 	{
-		var headers = HeaderUtil.toObject(request.headers);
-		setContentLengthHeader(headers);
-		return headers;
-	}
+		var result:Dynamic = {};
+		var isContentLengthPresent:Bool = false;
 
-	function setContentLengthHeader(headers:Dynamic):Void
-	{
-		if (!requestHasData()
-			|| Reflect.hasField(headers, "content-length")
-			|| Reflect.hasField(headers, "Content-Length"))
-			return;
+		for (header in request.headers)
+		{
+			Reflect.setField(result, header.name, header.value);
+			if (header.name.toLowerCase() == HeaderUtil.CONTENT_LENGTH_HEADER_NAME)
+				isContentLengthPresent = true;
+		}
+		if (!isContentLengthPresent && requestHasData())
+			Reflect.setField(result, HeaderUtil.CONTENT_LENGTH_HEADER_NAME, Std.string(Buffer.byteLength(request.data)));
 
-		Reflect.setField(headers, "Content-Length", Std.string(Buffer.byteLength(request.data)));
+		return result;
 	}
 
 	function requestHasData():Bool
@@ -144,9 +142,22 @@ class NodeLoader implements ILoader
 
 	function getResponse(responseObject:Dynamic):Response
 	{
-		var isSuccess = StatusCodeUtil.isSuccess(response.statusCode);
-		var headers = HeaderUtil.fromStringArrayToParameters(response.rawHeaders);
-		return new Response(isSuccess, responseObject, response.statusCode, response.statusMessage, headers);
+		return new Response(isSuccess(response.statusCode), responseObject, response.statusCode,
+			response.statusMessage, fromRawHeadersToArray(response.rawHeaders));
+	}
+
+	function isSuccess(statusCode:Int):Bool
+	{
+		return StatusCodeUtil.isSuccess(statusCode);
+	}
+
+	function fromRawHeadersToArray(source:Array<String>):Array<Parameter>
+	{
+		var i = 0, result:Array<Parameter> = [];
+		while (i < source.length)
+			result.push(new Parameter(source[i++], source[i++]));
+
+		return result;
 	}
 
 	function onRequestResponse(response:IncomingMessage):Void
@@ -170,7 +181,7 @@ class NodeLoader implements ILoader
 
 	function onClientRequestError(error:Dynamic):Void
 	{
+		onResponse(new Response(false, null, 0, error.message, null));
 		cancel();
-		throw error;
 	}
 }
