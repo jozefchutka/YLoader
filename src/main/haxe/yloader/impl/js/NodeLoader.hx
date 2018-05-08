@@ -9,7 +9,7 @@ import js.node.Https.HttpsRequestOptions;
 import js.node.Https;
 import js.node.Url;
 import yloader.ILoader;
-import yloader.util.HeaderUtil;
+import yloader.util.ParameterUtil;
 import yloader.util.StatusCodeUtil;
 import yloader.valueObject.Parameter;
 import yloader.valueObject.Request;
@@ -53,16 +53,36 @@ class NodeLoader implements ILoader
 
 	function createClientRequest():ClientRequest
 	{
-		var url:UrlData = Url.parse(request.urlWithQuery, true);
-		switch (url.protocol)
-		{
-			case "http:":
-				return createHttpRequest(url);
-			case "https:":
-				return createHttpsRequest(url);
-			default:
-				return null;
-		}
+		var url = Url.parse(request.urlWithQuery, true);
+		var options = createOptions(url);
+
+		if (url.protocol == "http:")
+			return Http.request(options, onRequestResponse);
+		if (url.protocol == "https:")
+			return Https.request(options, onRequestResponse);
+
+		return null;
+	}
+
+	function createOptions(url:UrlData):HttpsRequestOptions
+	{
+		return {
+			host: url.host,
+			port: Std.parseInt(url.port),
+			path: url.path,
+			method: Std.string(request.method),
+			headers: ParameterUtil.toObject(createHeaders())
+		};
+	}
+
+	function createHeaders():Array<Parameter>
+	{
+		var result = request.headers.copy();
+
+		if (requestHasData() && ParameterUtil.getContentLength(result) == null)
+			ParameterUtil.setContentLength(Buffer.byteLength(request.data), result);
+
+		return result;
 	}
 
 	function addClientRequestListeners():Void
@@ -86,46 +106,6 @@ class NodeLoader implements ILoader
 		clientRequest.end();
 	}
 
-	function createHttpRequest(url:UrlData):ClientRequest
-	{
-		var options:HttpRequestOptions = createOptions(url);
-		return Http.request(options, onRequestResponse);
-	}
-
-	function createHttpsRequest(url:UrlData):ClientRequest
-	{
-		var options:HttpsRequestOptions = createOptions(url);
-		return Https.request(options, onRequestResponse);
-	}
-
-	function createOptions(url:UrlData):HttpsRequestOptions
-	{
-		return {
-			host: url.host,
-			port: Std.parseInt(url.port),
-			path: url.path,
-			method: Std.string(request.method),
-			headers: getHeaders()
-		};
-	}
-
-	function getHeaders():Dynamic
-	{
-		var result:Dynamic = {};
-		var isContentLengthPresent:Bool = false;
-
-		for (header in request.headers)
-		{
-			Reflect.setField(result, header.name, header.value);
-			if (header.name.toLowerCase() == HeaderUtil.CONTENT_LENGTH_HEADER_NAME)
-				isContentLengthPresent = true;
-		}
-		if (!isContentLengthPresent && requestHasData())
-			Reflect.setField(result, HeaderUtil.CONTENT_LENGTH_HEADER_NAME, Std.string(Buffer.byteLength(request.data)));
-
-		return result;
-	}
-
 	function requestHasData():Bool
 	{
 		return request.data != null && request.data.length > 0;
@@ -143,7 +123,7 @@ class NodeLoader implements ILoader
 	function getResponse(responseObject:Dynamic):Response
 	{
 		return new Response(isSuccess(response.statusCode), responseObject, response.statusCode,
-			response.statusMessage, fromRawHeadersToArray(response.rawHeaders));
+			response.statusMessage, rawHeadersToParameters(response.rawHeaders));
 	}
 
 	function isSuccess(statusCode:Int):Bool
@@ -151,7 +131,7 @@ class NodeLoader implements ILoader
 		return StatusCodeUtil.isSuccess(statusCode);
 	}
 
-	function fromRawHeadersToArray(source:Array<String>):Array<Parameter>
+	function rawHeadersToParameters(source:Array<String>):Array<Parameter>
 	{
 		var i = 0, result:Array<Parameter> = [];
 		while (i < source.length)

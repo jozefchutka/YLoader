@@ -2,9 +2,8 @@ package yloader.impl.js;
 
 import js.Browser;
 import js.html.XMLHttpRequest;
-
 import yloader.enums.Status;
-import yloader.util.HeaderUtil;
+import yloader.util.ParameterUtil;
 import yloader.util.StatusCodeUtil;
 import yloader.valueObject.Parameter;
 import yloader.valueObject.Request;
@@ -51,7 +50,7 @@ class XMLHttpRequestLoader implements ILoader
 	function getHeaders(xhr:XMLHttpRequest):Array<Parameter>
 	{
 		var text = xhr.getAllResponseHeaders();
-		var result = HeaderUtil.toParameters(text);
+		var result = ParameterUtil.fromText(text);
 		return result;
 	}
 
