@@ -50,6 +50,12 @@
 			"type": "haxelib",
 			"scopes": ["test"],
 			"forceVersion": true
+		},
+		{
+			"name":"hxnodejs",
+			"version":"4.0.9",
+			"type": "haxelib",
+			"forceVersion": true
 		}
 	],
 
@@ -83,6 +89,7 @@
 			"command": "haxe",
 			"arguments":
 			[
+				"${dependency:*:classPath:-cp}",
 				"-cp", "${variable:sourceDirectory}",
 				"--macro", "include('yloader')",
 				"-js", "none", "--no-output"

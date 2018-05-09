@@ -1,12 +1,12 @@
 package yloader.impl.js;
 
-import js.html.XMLHttpRequest;
 import js.Browser;
-
+import js.html.XMLHttpRequest;
 import yloader.enums.Status;
-import yloader.util.HeaderUtil;
-import yloader.valueObject.Request;
+import yloader.util.ParameterUtil;
+import yloader.util.StatusCodeUtil;
 import yloader.valueObject.Parameter;
+import yloader.valueObject.Request;
 import yloader.valueObject.Response;
 
 class XMLHttpRequestLoader implements ILoader
@@ -50,7 +50,7 @@ class XMLHttpRequestLoader implements ILoader
 	function getHeaders(xhr:XMLHttpRequest):Array<Parameter>
 	{
 		var text = xhr.getAllResponseHeaders();
-		var result = HeaderUtil.toParameters(text);
+		var result = ParameterUtil.fromText(text);
 		return result;
 	}
 
@@ -62,9 +62,9 @@ class XMLHttpRequestLoader implements ILoader
 		return new Response(success, xhr.response, status, xhr.statusText, headers);
 	}
 
-	function isSuccess(status:Int):Bool
+	function isSuccess(statusCode:Int):Bool
 	{
-		return status >= 200 && status < 400;
+		return StatusCodeUtil.isSuccess(statusCode);
 	}
 
 	function handleResponse(xhr:XMLHttpRequest)

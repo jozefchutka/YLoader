@@ -4,11 +4,13 @@ import yloader.valueObject.Parameter;
 
 class ParameterUtil
 {
+	public static inline var PARAMETER_CONTENT_LENGTH = "content-length";
+
 	public static function update(list:Array<Parameter>, parameter:Parameter)
 	{
 		var found:Bool = false;
 		for(item in list)
-			if(item.name == parameter.name)
+			if(normalizeName(item.name) == normalizeName(parameter.name))
 			{
 				item.value = parameter.value;
 				found = true;
@@ -57,5 +59,47 @@ class ParameterUtil
 			name = StringTools.urlDecode(pair);
 		}
 		return new Parameter(name, value);
+	}
+
+	public static function fromText(text:String):Array<Parameter>
+	{
+		var lines = text.split("\n");
+		var result:Array<Parameter> = [];
+		for(line in lines)
+		{
+			if(line == "")
+				continue;
+			var data = line.split(":");
+			var name = StringTools.trim(data.shift());
+			var value = StringTools.trim(data.join(":"));
+			result.push(new Parameter(name, value));
+		}
+		return result;
+	}
+
+	public static function getContentLength(list:Array<Parameter>):Int
+	{
+		for (item in list)
+			if (normalizeName(item.name) == PARAMETER_CONTENT_LENGTH)
+				return Std.parseInt(item.value);
+		return null;
+	}
+
+	public static function setContentLength(value:Int, target:Array<Parameter>):Void
+	{
+		update(target, new Parameter(PARAMETER_CONTENT_LENGTH, Std.string(value)));
+	}
+
+	public static function toObject(list:Array<Parameter>):Dynamic
+	{
+		var result = {};
+		for (item in list)
+			Reflect.setField(result, item.name, item.value);
+		return result;
+	}
+
+	static function normalizeName(name:String):String
+	{
+		return name.toLowerCase();
 	}
 }

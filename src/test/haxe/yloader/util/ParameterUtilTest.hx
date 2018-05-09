@@ -98,4 +98,92 @@ class ParameterUtilTest
 		Assert.areEqual("foo", ParameterUtil.fromQueryString("?foo=1&foo=2&foo=3")[2].name);
 		Assert.areEqual("3", ParameterUtil.fromQueryString("?foo=1&foo=2&foo=3")[2].value);
 	}
+
+	@Test
+	public function customHeader_fromText_matches():Void
+	{
+		var header = "hello:world\nfoo : bar";
+		var params = ParameterUtil.fromText(header);
+
+		Assert.areEqual(2, params.length);
+		Assert.areEqual(params[0].name, "hello");
+		Assert.areEqual(params[0].value, "world");
+		Assert.areEqual(params[1].name, "foo");
+		Assert.areEqual(params[1].value, "bar");
+	}
+
+	@Test
+	public function customHeaders_getContentLength_matches():Void
+	{
+		var headers:Array<Parameter> = [
+			new Parameter("Content-Length", "123"),
+			new Parameter("User-Agent", "curl/7.22.0"),
+			new Parameter("ACCEPT", "*/*")
+		];
+
+		var contentLength = ParameterUtil.getContentLength(headers);
+		Assert.areEqual(123, contentLength);
+
+		ParameterUtil.update(headers, new Parameter("content-length", "111"));
+		contentLength = ParameterUtil.getContentLength(headers);
+		Assert.areEqual(111, contentLength);
+	}
+
+	@Test
+	public function customHeadersWithoutContentLength_getContentLength_returnsNull():Void
+	{
+		var headers:Array<Parameter> = [
+			new Parameter("User-Agent", "curl/7.22.0"),
+			new Parameter("ACCEPT", "*/*")
+		];
+
+		var contentLength = ParameterUtil.getContentLength(headers);
+		Assert.isNull(contentLength);
+	}
+
+	@Test
+	public function customHeaders_setContentLength_matches():Void
+	{
+		var headers:Array<Parameter> = [
+			new Parameter("Content-Length", "123"),
+			new Parameter("User-Agent", "curl/7.22.0"),
+			new Parameter("ACCEPT", "*/*")
+		];
+
+		ParameterUtil.setContentLength(111, headers);
+		var contentLength = ParameterUtil.getContentLength(headers);
+		Assert.areEqual(111, contentLength);
+	}
+
+	@Test
+	public function parametersArray_toObject_createsAllFields():Void
+	{
+		var headers:Array<Parameter> = [
+			new Parameter("Content-Length", "123"),
+			new Parameter("User-Agent", "curl/7.22.0"),
+			new Parameter("ACCEPT", "*/*")
+		];
+
+		var headersObject = ParameterUtil.toObject(headers);
+
+		Assert.isTrue(Reflect.hasField(headersObject, "Content-Length"));
+		Assert.isTrue(Reflect.hasField(headersObject, "User-Agent"));
+		Assert.isTrue(Reflect.hasField(headersObject, "ACCEPT"));
+	}
+
+	@Test
+	public function parametersArray_toObject_createsAllValues():Void
+	{
+		var headers:Array<Parameter> = [
+			new Parameter("Content-Length", "123"),
+			new Parameter("User-Agent", "curl/7.22.0"),
+			new Parameter("ACCEPT", "*/*")
+		];
+
+		var headersObject = ParameterUtil.toObject(headers);
+
+		Assert.areEqual("123", Reflect.getProperty(headersObject, "Content-Length"));
+		Assert.areEqual("curl/7.22.0", Reflect.getProperty(headersObject, "User-Agent"));
+		Assert.areEqual("*/*", Reflect.getProperty(headersObject, "ACCEPT"));
+	}
 }
