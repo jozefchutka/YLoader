@@ -163,5 +163,6 @@ class NodeLoader implements ILoader
 	{
 		if (onResponse != null)
 			onResponse(new Response(false, null, 0, null, null));
+		cancel();
 	}
 }
