@@ -89,10 +89,10 @@
 			"command": "haxe",
 			"arguments":
 			[
+				"${dependency:*:classPath:-cp}",
 				"-cp", "${variable:sourceDirectory}",
 				"--macro", "include('yloader')",
-				"-js", "none", "--no-output",
-			  	"${dependency:*:classPath:-cp}"
+				"-js", "none", "--no-output"
 			]
 		}
 	],

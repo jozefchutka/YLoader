@@ -113,7 +113,7 @@ class ParameterUtilTest
 	}
 
 	@Test
-	public function getContentLength_matches():Void
+	public function customHeaders_getContentLength_matches():Void
 	{
 		var headers:Array<Parameter> = [
 			new Parameter("Content-Length", "123"),
@@ -128,5 +128,58 @@ class ParameterUtilTest
 		ParameterUtil.update(headers, new Parameter("content-length", "111"));
 		contentLength = ParameterUtil.getContentLength(headers);
 		Assert.areEqual(111, contentLength);
+
+		ParameterUtil.update(headers, new Parameter("content-length", null));
+		Assert.isNull(ParameterUtil.getContentLength(headers));
+	}
+
+	@Test
+	public function customHeaders_setContentLength_matches():Void
+	{
+		var headers:Array<Parameter> = [
+			new Parameter("Content-Length", "123"),
+			new Parameter("User-Agent", "curl/7.22.0"),
+			new Parameter("ACCEPT", "*/*")
+		];
+
+		ParameterUtil.setContentLength(111, headers);
+		var contentLength = ParameterUtil.getContentLength(headers);
+		Assert.areEqual(111, contentLength);
+
+		ParameterUtil.setContentLength(null, headers);
+		contentLength = ParameterUtil.getContentLength(headers);
+		Assert.isNull(contentLength);
+	}
+
+	@Test
+	public function parametersArray_toObject_createsAllFields():Void
+	{
+		var headers:Array<Parameter> = [
+			new Parameter("Content-Length", "123"),
+			new Parameter("User-Agent", "curl/7.22.0"),
+			new Parameter("ACCEPT", "*/*")
+		];
+
+		var headersObject = ParameterUtil.toObject(headers);
+
+		Assert.isTrue(Reflect.hasField(headersObject, "Content-Length"));
+		Assert.isTrue(Reflect.hasField(headersObject, "User-Agent"));
+		Assert.isTrue(Reflect.hasField(headersObject, "ACCEPT"));
+	}
+
+	@Test
+	public function parametersArray_toObject_createsAllValues():Void
+	{
+		var headers:Array<Parameter> = [
+			new Parameter("Content-Length", "123"),
+			new Parameter("User-Agent", "curl/7.22.0"),
+			new Parameter("ACCEPT", "*/*")
+		];
+
+		var headersObject = ParameterUtil.toObject(headers);
+
+		Assert.areEqual("123", Reflect.getProperty(headersObject, "Content-Length"));
+		Assert.areEqual("curl/7.22.0", Reflect.getProperty(headersObject, "User-Agent"));
+		Assert.areEqual("*/*", Reflect.getProperty(headersObject, "ACCEPT"));
 	}
 }

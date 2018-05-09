@@ -161,7 +161,8 @@ class NodeLoader implements ILoader
 
 	function onClientRequestError(error:Dynamic):Void
 	{
-		onResponse(new Response(false, null, 0, error.message, null));
+		if (onResponse != null)
+			onResponse(new Response(false, null, 0, null, null));
 		cancel();
 	}
 }
