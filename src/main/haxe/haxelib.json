@@ -13,8 +13,10 @@
 	"contributors": [
 		"jozefchutka"
 	],
-	"releasenote": "Added PATCH and TRACE request methods.",
-	"version": "0.0.7",
+	"releasenote": "Added NodeJS loader.",
+	"version": "0.0.8",
 	"url": "https://github.com/jozefchutka/YLoader",
-	"dependencies": {}
+	"dependencies": {
+		"hxnodejs": "4.0.9"
+	}
 }
