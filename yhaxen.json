@@ -23,32 +23,32 @@
 	[
 		{
 			"name":"munit",
-			"version":"2.2.2",
+			"version":"2.3.1",
 			"source": "git@github.com:massiveinteractive/MassiveUnit.git",
 			"type": "git",
 			"subdirectory": "src",
 			"makeCurrent": true,
-			"scopes": ["test"]
+			"scopes": ["test-browser", "test-nodejs"]
 		},
 		{
 			"name":"mcover",
 			"version":"2.0.3",
 			"type": "haxelib",
-			"scopes": ["test"],
+			"scopes": ["test-browser", "test-nodejs"],
 			"forceVersion": true
 		},
 		{
 			"name":"mconsole",
 			"version":"1.6.0",
 			"type": "haxelib",
-			"scopes": ["test"],
+			"scopes": ["test-browser", "test-nodejs"],
 			"forceVersion": true
 		},
 		{
 			"name":"mlib",
 			"version":"2.0.2",
 			"type": "haxelib",
-			"scopes": ["test"],
+			"scopes": ["test-browser", "test-nodejs"],
 			"forceVersion": true
 		},
 		{
@@ -62,7 +62,7 @@
 	"tests":
 	[
 		{
-			"name": "test",
+			"name": "test-browser",
 			"command": "haxelib",
 			"arguments":
 			[
@@ -77,6 +77,26 @@
 				"target:-cp", "${variable:sourceDirectory}",
 				"target:-cp", "${variable:testSourceDirectory}",
 				"${dependency:*:classPath:target:-cp}",
+				"target:-js", "${variable:testOutputDirectory}/js_test.js"
+			]
+		},
+		{
+			"name": "test-nodejs",
+			"command": "haxelib",
+			"arguments":
+			[
+				"run", "munit", "test", "cliconfig",
+				"${variable:testSourceDirectory}",
+				"${variable:testOutputDirectory}",
+				"${variable:testReportDirectory}",
+				"-result-exit-code",
+				"config:classPath", "${variable:sourceDirectory}",
+				"config:coverageIgnoredClass", "module",
+				"target:-main", "TestMain",
+				"target:-cp", "${variable:sourceDirectory}",
+				"target:-cp", "${variable:testSourceDirectory}",
+				"${dependency:*:classPath:target:-cp}",
+				"target:-D", "nodejs",
 				"target:-js", "${variable:testOutputDirectory}/js_test.js"
 			]
 		}
