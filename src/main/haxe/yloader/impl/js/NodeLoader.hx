@@ -2,16 +2,15 @@ package yloader.impl.js;
 
 import js.node.buffer.Buffer;
 import js.node.http.ClientRequest;
-import js.node.Http.HttpRequestOptions;
 import js.node.http.IncomingMessage;
 import js.node.Http;
-import js.node.Https.HttpsRequestOptions;
 import js.node.Https;
-import js.node.Url;
 import yloader.ILoader;
 import yloader.util.ParameterUtil;
 import yloader.util.StatusCodeUtil;
+import yloader.util.UrlUtil;
 import yloader.valueObject.Parameter;
+import yloader.valueObject.ParsedUrl;
 import yloader.valueObject.Request;
 import yloader.valueObject.Response;
 
@@ -53,7 +52,7 @@ class NodeLoader implements ILoader
 
 	function createClientRequest():ClientRequest
 	{
-		var url = Url.parse(request.urlWithQuery, true);
+		var url = UrlUtil.parse(request.urlWithQuery);
 		var options = createOptions(url);
 
 		if (url.protocol == "http:")
@@ -64,7 +63,7 @@ class NodeLoader implements ILoader
 		return null;
 	}
 
-	function createOptions(url:UrlData):HttpsRequestOptions
+	function createOptions(url:ParsedUrl):HttpsRequestOptions
 	{
 		return {
 			host: url.host,
