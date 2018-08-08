@@ -9,11 +9,12 @@ class ParsedUrl
 	public var hostname(default, null):String;
 	public var port(default, null):String;
 	public var pathname(default, null):String;
+	public var path(default, null):String;
 	public var search(default, null):String;
 	public var hash(default, null):String;
 
 	public function new(protocol:String, username:String, password:String, host:String, hostname:String, port:String,
-		pathname:String, search:String, hash:String)
+		pathname:String, path:String, search:String, hash:String)
 	{
 		this.protocol = protocol;
 		this.username = username;
@@ -22,6 +23,7 @@ class ParsedUrl
 		this.hostname = hostname;
 		this.port = port;
 		this.pathname = pathname;
+		this.path = path;
 		this.search = search;
 		this.hash = hash;
 	}

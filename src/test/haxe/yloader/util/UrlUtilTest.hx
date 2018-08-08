@@ -37,6 +37,7 @@ class UrlUtilTest
 		Assert.areEqual("github.com", result.hostname);
 		Assert.areEqual(null, result.port);
 		Assert.areEqual("/", result.pathname);
+		Assert.areEqual("/", result.path);
 		Assert.areEqual("", result.search);
 		Assert.areEqual(null, result.hash);
 	}
@@ -54,6 +55,7 @@ class UrlUtilTest
 		Assert.areEqual("www.github.com", result.hostname);
 		Assert.areEqual("80", result.port);
 		Assert.areEqual("/jozefchutka/YLoader", result.pathname);
+		Assert.areEqual("/jozefchutka/YLoader?a=b&c=d", result.path);
 		Assert.areEqual("?a=b&c=d", result.search);
 		Assert.areEqual("#myHash", result.hash);
 	}

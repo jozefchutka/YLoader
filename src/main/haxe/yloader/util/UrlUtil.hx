@@ -12,7 +12,7 @@ class UrlUtil
 		var username = auth != null ? auth.split(":")[0] : null;
 		var password = auth != null ? auth.split(":")[1] : null;
 		return new ParsedUrl(parser.protocol, username, password, parser.host, parser.hostname,
-			parser.port, parser.pathname, parser.search, parser.hash);
+			parser.port, parser.pathname, parser.path, parser.search, parser.hash);
 		#else
 		var document = js.Browser.document;
 		var parser = document.createAnchorElement();
@@ -30,7 +30,7 @@ class UrlUtil
 		var password = parser.password == "" ? null : parser.password;
 		var hash = parser.hash == "" ? null : parser.hash;
 		return new ParsedUrl(parser.protocol, username, password, parser.host, parser.hostname,
-			port, parser.pathname, parser.search, hash);
+			port, parser.pathname, parser.pathname + parser.search, parser.search, hash);
 		#end
 	}
 }
