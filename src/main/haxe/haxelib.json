@@ -13,8 +13,8 @@
 	"contributors": [
 		"jozefchutka"
 	],
-	"releasenote": "NodeJS support for UrlUtil",
-	"version": "0.0.9",
+	"releasenote": "NodeLoader to use UrlUtil.",
+	"version": "0.0.10",
 	"url": "https://github.com/jozefchutka/YLoader",
 	"dependencies": {
 		"hxnodejs": "4.0.9"
