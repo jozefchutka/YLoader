@@ -13,10 +13,10 @@
 	"contributors": [
 		"jozefchutka"
 	],
-	"releasenote": "NodeLoader to use UrlUtil.",
-	"version": "0.0.10",
+	"releasenote": "Haxe 4+",
+	"version": "0.0.11",
 	"url": "https://github.com/jozefchutka/YLoader",
 	"dependencies": {
-		"hxnodejs": "4.0.9"
+		"hxnodejs": "12.1.0"
 	}
 }
