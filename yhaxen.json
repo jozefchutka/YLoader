@@ -23,7 +23,7 @@
 	[
 		{
 			"name":"munit",
-			"version":"2.3.1",
+			"version":"2.3.5",
 			"source": "git@github.com:massiveinteractive/MassiveUnit.git",
 			"type": "git",
 			"subdirectory": "src",
@@ -53,7 +53,7 @@
 		},
 		{
 			"name":"hxnodejs",
-			"version":"4.0.9",
+			"version":"12.1.0",
 			"type": "haxelib",
 			"forceVersion": true
 		}

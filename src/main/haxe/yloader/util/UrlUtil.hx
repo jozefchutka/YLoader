@@ -11,8 +11,9 @@ class UrlUtil
 		var auth = parser.auth;
 		var username = auth != null ? auth.split(":")[0] : null;
 		var password = auth != null ? auth.split(":")[1] : null;
+		var search = parser.search == null ? "" : parser.search;
 		return new ParsedUrl(parser.protocol, username, password, parser.host, parser.hostname,
-			parser.port, parser.pathname, parser.path, parser.search, parser.hash);
+			parser.port, parser.pathname, parser.path, search, parser.hash);
 		#else
 		var document = js.Browser.document;
 		var parser = document.createAnchorElement();

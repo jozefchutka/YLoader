@@ -2,6 +2,7 @@ package yloader.impl.js;
 
 import js.Browser;
 import js.html.XMLHttpRequest;
+import js.Syntax;
 import yloader.enums.Status;
 import yloader.util.UrlUtil;
 import yloader.valueObject.Response;
@@ -14,12 +15,12 @@ class XDomainRequestLoader extends XMLHttpRequestLoader
 
 	override function createXHR():XMLHttpRequest
 	{
-		return untyped __new__("XDomainRequest");
+		return Syntax.construct("XDomainRequest");
 	}
 
 	static function get_isAvailable():Bool
 	{
-		return untyped __js__("typeof XDomainRequest") != "undefined";
+		return Syntax.code("typeof XDomainRequest !== {0}", "undefined");
 	}
 
 	public static function isPreferred(url:String):Bool

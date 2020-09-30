@@ -2,6 +2,7 @@ package yloader.impl.js;
 
 import js.Browser;
 import js.html.XMLHttpRequest;
+import js.Syntax;
 import yloader.enums.Status;
 import yloader.util.ParameterUtil;
 import yloader.util.StatusCodeUtil;
@@ -44,7 +45,7 @@ class XMLHttpRequestLoader implements ILoader
 	function getStatus(xhr:XMLHttpRequest):Int
 	{
 		var result = try xhr.status catch(error:Dynamic) Status.FAILED_TO_CONNECT_OR_RESOLVE_HOST;
-		return (result == untyped __js__("undefined")) ? Status.FAILED_TO_CONNECT_OR_RESOLVE_HOST : result;
+		return Syntax.code("typeof {0} === {1}", result, "undefined") ? Status.FAILED_TO_CONNECT_OR_RESOLVE_HOST : result;
 	}
 
 	function getHeaders(xhr:XMLHttpRequest):Array<Parameter>
